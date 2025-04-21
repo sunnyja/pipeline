@@ -55,6 +55,7 @@ func read(next chan<- int, done chan bool) {
 
 	for scan.Scan() {
 		data = scan.Text()
+		fmt.Println("введено значение ", data)
 		if strings.EqualFold(data, "exit") {
 			fmt.Println("Работа завершена")
 			close(done)
@@ -74,6 +75,7 @@ func filterNegativeValues(prevChan <-chan int, nextChan chan<- int, done <-chan 
 		select {
 		case data := <-prevChan:
 			if data > 0 {
+				fmt.Println("значение больше 0")
 				nextChan<- data
 			}
 		case <-done:
@@ -87,6 +89,7 @@ func filterNotDevidedValues(prevChan <-chan int, nextChan chan<- int, done <-cha
 		select {
 		case data := <-prevChan:
 			if data%3 == 0 && data != 0 {
+				fmt.Println("значение кратно 3")
 				nextChan <- data
 			}
 		case <-done:
@@ -101,6 +104,7 @@ func bufferStage(prevChan <-chan int, nextChan chan<- int, done <-chan bool) {
 		select {
 		case data := <-prevChan:
 			buffer.Push(data)
+			fmt.Println("добавлено значение в буфер ", data)
 		case <-time.After(bufferClearInterval):
 			bufferData := buffer.Get()
 			if bufferData != nil {
